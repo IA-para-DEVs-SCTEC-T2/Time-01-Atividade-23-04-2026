@@ -1,0 +1,58 @@
+[
+  {
+    "id": "faq-001",
+    "category": "entrega",
+    "question": "Qual o prazo de entrega?",
+    "answer": "O prazo de entrega padrão é de 5 a 10 dias úteis para capitais e regiões metropolitanas. Para cidades do interior, o prazo é de 10 a 15 dias úteis. O prazo começa a contar após a confirmação do pagamento.",
+    "keywords": ["prazo", "entrega", "quando", "chega", "chegará", "demora", "dias", "envio", "despacho"]
+  },
+  {
+    "id": "faq-002",
+    "category": "entrega",
+    "question": "Como acompanhar o envio do meu pedido?",
+    "answer": "Após o despacho, você receberá um código de rastreamento por e-mail. Use esse código no site dos Correios ou da transportadora indicada para acompanhar a entrega em tempo real.",
+    "keywords": ["rastreamento", "rastrear", "código", "transportadora", "correios", "envio", "acompanhar", "entrega"]
+  },
+  {
+    "id": "faq-003",
+    "category": "troca",
+    "question": "Qual é a política de troca e devolução?",
+    "answer": "Você tem até 7 dias corridos após o recebimento do produto para solicitar troca ou devolução, conforme o Código de Defesa do Consumidor. O produto deve estar sem uso, na embalagem original e com todos os acessórios inclusos.",
+    "keywords": ["troca", "devolução", "devolver", "trocar", "prazo", "7 dias", "arrependimento", "retorno", "política"]
+  },
+  {
+    "id": "faq-004",
+    "category": "troca",
+    "question": "Como solicitar uma troca ou devolução?",
+    "answer": "Para solicitar troca ou devolução, acesse sua conta no site ou app da TechStore, vá em 'Meus Pedidos', selecione o pedido e clique em 'Solicitar Troca/Devolução'. Nossa equipe entrará em contato em até 2 dias úteis para orientar os próximos passos.",
+    "keywords": ["solicitar", "troca", "devolução", "como", "processo", "pedido", "conta", "app", "site"]
+  },
+  {
+    "id": "faq-005",
+    "category": "pagamento",
+    "question": "Quais são as formas de pagamento aceitas?",
+    "answer": "A TechStore aceita as seguintes formas de pagamento: cartão de crédito (Visa, Mastercard, Elo, American Express) em até 12x, cartão de débito, PIX (com desconto de 5%) e boleto bancário (compensação em até 3 dias úteis).",
+    "keywords": ["pagamento", "pagar", "formas", "cartão", "crédito", "débito", "pix", "boleto", "parcelamento", "parcelas"]
+  },
+  {
+    "id": "faq-006",
+    "category": "pagamento",
+    "question": "Posso parcelar minha compra?",
+    "answer": "Sim, compras com cartão de crédito podem ser parceladas em até 12 vezes. Parcelas a partir de R$ 30,00. Parcelamento sem juros disponível em até 6x para compras acima de R$ 150,00.",
+    "keywords": ["parcelar", "parcelas", "parcelamento", "vezes", "juros", "crédito", "cartão"]
+  },
+  {
+    "id": "faq-007",
+    "category": "pedido",
+    "question": "Como consultar o status do meu pedido?",
+    "answer": "Você pode consultar o status do seu pedido de duas formas: (1) pelo site da TechStore, acessando 'Minha Conta' > 'Meus Pedidos' e informando o número do pedido; (2) pelo aplicativo TechStore, na seção 'Pedidos'. Você também receberá atualizações automáticas por e-mail a cada mudança de status.",
+    "keywords": ["status", "pedido", "consultar", "acompanhar", "onde", "situação", "número", "app", "site", "conta"]
+  },
+  {
+    "id": "faq-008",
+    "category": "pedido",
+    "question": "Onde encontro o número do meu pedido?",
+    "answer": "O número do pedido é enviado por e-mail logo após a confirmação da compra. Você também pode encontrá-lo acessando 'Minha Conta' > 'Meus Pedidos' no site ou app da TechStore.",
+    "keywords": ["número", "pedido", "encontrar", "onde", "código", "confirmação", "e-mail", "conta"]
+  }
+]
