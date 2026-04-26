@@ -9,6 +9,7 @@ Define como o código deve ser organizado para que o projeto permaneça simples,
 ## Diretório Raiz
 
 - `src/` — Código-fonte principal
+- `public/` — Arquivos estáticos servidos pelo Express (ex: `chat.html`)
 - `package.json` — Dependências e scripts
 - `.env` — Variáveis de ambiente (nunca commitar)
 
@@ -18,13 +19,23 @@ Define como o código deve ser organizado para que o projeto permaneça simples,
 |---|---|
 | `config/` | Configuração do banco de dados e da aplicação |
 | `database/` | Migrações e seeds |
-| `dominios/` | Controllers e Services (regras de negócio) |
+| `dominios/chat/` | Chat service, classificador e FAQ repository |
+| `dominios/ticket/` | Ticket service |
+| `dominios/websocket/` | WebSocket server, session manager e event handlers |
 | `middlewares/` | Funções de middleware HTTP |
 | `models/` | Modelos de tabelas do banco de dados |
 | `routers/` | Definição das rotas da API |
-| `utils/` | Funções utilitárias e hooks compartilhados |
-| `index.js` | Ponto de entrada da aplicação |
-| `server.js` | Inicialização do servidor |
+| `utils/` | Funções utilitárias: `gemini_client.js`, `uuid.js` |
+| `index.js` | Ponto de entrada — cria `http.Server`, injeta dependências, inicializa WebSocket |
+| `server.js` | Configuração do Express, middlewares e rotas |
+
+## Módulo WebSocket (`src/dominios/websocket/`)
+
+| Arquivo | Responsabilidade |
+|---|---|
+| `websocket_server.js` | Servidor WebSocket com injeção de dependência; exporta `criar_websocket_server(http_server, chat_service, ticket_service)` |
+| `session_manager.js` | Mapa em memória de sessões ativas; exporta `criar_session_manager()` |
+| `event_handler.js` | Handlers puros de evento (sem acesso ao socket); exporta `handle_mensagem`, `handle_abrir_ticket`, `handle_evento_desconhecido`, `handle_json_invalido` |
 
 ## Regras de Arquitetura
 
@@ -34,6 +45,7 @@ Define como o código deve ser organizado para que o projeto permaneça simples,
 - Repositórios não devem conter lógica de conversa com o usuário.
 - Funções devem ser pequenas e com nomes descritivos.
 - Todas as integrações externas (LLM, clientes HTTP) devem ter interfaces fáceis de mockar em testes.
+- O `http.Server` é criado explicitamente em `src/index.js` — nunca usar `app.listen()` diretamente.
 
 ## Convenções de Código
 
