@@ -1,46 +1,51 @@
-##Objetivo
-Definir como o código deve ser organizado para que o projeto permaneça simples, previsível e fácil de evoluir.
+---
+inclusion: always
+---
 
-##Organização por camadas
-- api/: recebe requisições e retorna respostas.
+# Estrutura do Projeto
 
-- services/: contém regras de negócio.
+Define como o código deve ser organizado para que o projeto permaneça simples, previsível e fácil de evoluir.
 
-- repositories/: integra com arquivos, banco ou APIs externas.
+## Diretório Raiz
 
-- models/: define schemas e contratos de dados.
+- `src/` — Código-fonte principal
+- `package.json` — Dependências e scripts
+- `.env` — Variáveis de ambiente (nunca commitar)
 
-- prompts/: armazena instruções estáveis para o LLM.
+## Estrutura do `src/`
 
-- utils/: contém helpers realmente reutilizáveis.
+| Caminho | Responsabilidade |
+|---|---|
+| `config/` | Configuração do banco de dados e da aplicação |
+| `database/` | Migrações e seeds |
+| `dominios/` | Controllers e Services (regras de negócio) |
+| `middlewares/` | Funções de middleware HTTP |
+| `models/` | Modelos de tabelas do banco de dados |
+| `routers/` | Definição das rotas da API |
+| `utils/` | Funções utilitárias e hooks compartilhados |
+| `index.js` | Ponto de entrada da aplicação |
+| `server.js` | Inicialização do servidor |
 
-##Regras de estrutura
-- Cada módulo deve ter responsabilidade clara.
+## Regras de Arquitetura
 
-- Rotas não devem conter regra de negócio complexa.
-
-- Serviços não devem conhecer detalhes do framework HTTP.
-
+- Cada módulo deve ter responsabilidade única e clara.
+- Rotas não devem conter regras de negócio complexas — delegar para services.
+- Services não devem depender de detalhes do framework HTTP (req/res).
 - Repositórios não devem conter lógica de conversa com o usuário.
+- Funções devem ser pequenas e com nomes descritivos.
+- Todas as integrações externas (LLM, clientes HTTP) devem ter interfaces fáceis de mockar em testes.
 
-- Funções devem ser pequenas e com nomes objetivos.
+## Convenções de Código
 
-##Convenções de código
-- Usar snake_case para arquivos, funções e variáveis.
-
-- Usar classes apenas quando ajudarem a encapsular estado ou contrato.
-
+- Usar `snake_case` para arquivos, funções e variáveis.
+- Usar classes apenas quando ajudarem a encapsular estado ou definir um contrato.
 - Preferir composição a herança.
+- Evitar nomes genéricos como `helpers.js` ou `misc.js` — nomear por domínio.
+- Centralizar configurações em `config/` e carregar a partir de variáveis de ambiente.
 
-- Evitar arquivos genéricos como helpers.py ou misc.py.
+## Convenções de Testes
 
-- Toda integração externa deve ter interface fácil de mockar em testes.
-
-##Convenções de testes
-- Criar testes unitários para FAQ, classificação e abertura de ticket.
-
-- Cobrir pelo menos o caminho feliz e o fallback.
-
-- Nomear arquivos de teste com prefixo test_.
-
-- Evitar testes acoplados ao provedor real de LLM.
+- Criar testes unitários para respostas de FAQ, classificação de mensagens e abertura de ticket.
+- Cobrir no mínimo: o caminho feliz e o caminho de fallback/erro.
+- Nomear arquivos de teste com o prefixo `test_`.
+- Nunca acoplar testes ao provedor real de LLM — sempre mockar a camada de LLM.
