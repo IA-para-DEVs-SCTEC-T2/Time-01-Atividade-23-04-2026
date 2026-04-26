@@ -26,6 +26,14 @@ async function handle_mensagem(dados, chat_service) {
     return { tipo: 'resposta', texto: result.resposta };
   }
 
+  if (result.tipo === 'solicitar_ticket') {
+    return {
+      tipo: 'resposta',
+      texto: 'Claro! Vou te ajudar a abrir um ticket.',
+      _solicitar_ticket: true,
+    };
+  }
+
   return {
     tipo: 'resposta',
     texto: result.resposta || 'Não entendi sua dúvida. Posso te ajudar com prazo de entrega, troca e devolução ou formas de pagamento.',

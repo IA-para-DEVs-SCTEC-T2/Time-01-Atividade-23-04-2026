@@ -1,6 +1,6 @@
 'use strict';
 
-const INTENCOES_VALIDAS = ['faq_prazos', 'faq_trocas', 'faq_pagamentos', 'desconhecida'];
+const INTENCOES_VALIDAS = ['faq_prazos', 'faq_trocas', 'faq_pagamentos', 'abrir_ticket', 'desconhecida'];
 
 /**
  * Cria um classificador de intenções com o gemini_client injetado.
@@ -12,7 +12,8 @@ function criar_classificador(gemini_client) {
   async function classificar(mensagem) {
     try {
       const resposta_bruta = await gemini_client.classificar_mensagem(mensagem);
-      const intencao = resposta_bruta.trim().toLowerCase();
+      const intencao = resposta_bruta.trim().toLowerCase().replace(/^["']|["']$/g, '');
+      console.log('[classificador]', JSON.stringify(mensagem), '→', intencao);
 
       if (INTENCOES_VALIDAS.includes(intencao)) {
         return intencao;

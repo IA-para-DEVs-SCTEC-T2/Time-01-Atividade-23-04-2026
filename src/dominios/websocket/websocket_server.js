@@ -7,17 +7,10 @@ const {
   handle_mensagem,
   handle_abrir_ticket,
   handle_evento_desconhecido,
-  handle_json_invalido,
 } = require('./event_handler');
 
-/**
- * Cria e inicializa o servidor WebSocket integrado ao http.Server existente.
- *
- * @param {import('http').Server} http_server
- * @param {object} chat_service
- * @param {object} ticket_service
- * @returns {{ fechar(): void }}
- */
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 function criar_websocket_server(http_server, chat_service, ticket_service) {
   if (process.env.WEBSOCKET_ENABLED === 'false') {
     return { fechar() {} };
@@ -30,36 +23,88 @@ function criar_websocket_server(http_server, chat_service, ticket_service) {
     const session_id = gerar_uuid_v4();
     session_manager.adicionar(session_id, socket);
 
+    // estado do fluxo de ticket por sessão
+    let ticket_state = null; // null | { etapa: 'nome'|'email'|'descricao', nome?, email? }
+
+    function enviar(obj) {
+      socket.send(JSON.stringify({ ...obj, session_id }));
+    }
+
     socket.send(JSON.stringify({ tipo: 'session_started', session_id }));
-    socket.send(JSON.stringify({
+    enviar({
       tipo: 'resposta',
-      session_id,
       texto: 'Olá! Sou o SupportBot da TechStore 👋\n\nPosso te ajudar com:\n• Prazo de entrega\n• Troca e devolução\n• Formas de pagamento\n\nComo posso te ajudar hoje?'
-    }));
+    });
 
     socket.on('message', async (raw) => {
       try {
-        let dados;
-        try {
-          dados = JSON.parse(raw);
-        } catch (_) {
-          // texto puro → tratar como mensagem de chat
-          dados = { tipo: 'mensagem', texto: raw.toString() };
+        const texto = (() => {
+          try { const d = JSON.parse(raw); return d.texto || null; }
+          catch (_) { return raw.toString().trim(); }
+        })();
+
+        if (!texto) return;
+
+        // fluxo de coleta de ticket passo a passo
+        if (ticket_state) {
+          if (ticket_state.etapa === 'nome') {
+            ticket_state.nome = texto;
+            ticket_state.etapa = 'email';
+            enviar({ tipo: 'resposta', texto: 'Qual é o seu e-mail?' });
+            return;
+          }
+
+          if (ticket_state.etapa === 'email') {
+            if (!EMAIL_REGEX.test(texto)) {
+              enviar({ tipo: 'resposta', texto: 'E-mail inválido. Por favor, informe um e-mail válido.' });
+              return;
+            }
+            ticket_state.email = texto;
+            ticket_state.etapa = 'descricao';
+            enviar({ tipo: 'resposta', texto: 'Descreva sua dúvida ou problema:' });
+            return;
+          }
+
+          if (ticket_state.etapa === 'descricao') {
+            const { nome, email } = ticket_state;
+            ticket_state = null;
+            enviar({ tipo: 'digitando' });
+            const resultado = await handle_abrir_ticket(
+              { tipo: 'abrir_ticket', nome, email, descricao: texto },
+              ticket_service
+            );
+            if (resultado.tipo === 'ticket_criado') {
+              enviar({ tipo: 'resposta', texto: `Ticket #${resultado.id} criado com sucesso! Nossa equipe entrará em contato em breve.` });
+            } else {
+              enviar(resultado);
+            }
+            return;
+          }
         }
 
-        let resultado;
-        if (dados.tipo === 'mensagem') {
-          resultado = await handle_mensagem(dados, chat_service);
-        } else if (dados.tipo === 'abrir_ticket') {
-          resultado = await handle_abrir_ticket(dados, ticket_service);
-        } else {
-          resultado = handle_evento_desconhecido(dados.tipo);
+        // fluxo normal
+        enviar({ tipo: 'digitando' });
+        const result = await handle_mensagem({ tipo: 'mensagem', texto }, chat_service);
+
+        if (result.tipo === 'resposta' && result._solicitar_ticket) {
+          ticket_state = { etapa: 'nome' };
+          enviar({ tipo: 'resposta', texto: result.texto });
+          enviar({ tipo: 'resposta', texto: 'Qual é o seu nome?' });
+          return;
         }
 
-        socket.send(JSON.stringify({ ...resultado, session_id }));
+        // verificar se chat_service sinalizou solicitar_ticket
+        if (result._solicitar_ticket || (result.tipo === 'resposta' && result.texto && result.texto.includes('abrir um ticket'))) {
+          ticket_state = { etapa: 'nome' };
+          enviar(result);
+          enviar({ tipo: 'resposta', texto: 'Qual é o seu nome?' });
+          return;
+        }
+
+        enviar(result);
       } catch (err) {
         console.error('Erro ao processar mensagem WebSocket:', err.stack || err);
-        socket.send(JSON.stringify({ tipo: 'erro', session_id, mensagem: 'Erro interno ao processar a solicitação.' }));
+        enviar({ tipo: 'erro', mensagem: 'Erro interno ao processar a solicitação.' });
       }
     });
 

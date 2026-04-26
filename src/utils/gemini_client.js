@@ -1,7 +1,7 @@
 'use strict';
 
 const GEMINI_API_URL_BASE =
-  'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent';
+  'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent';
 
 /**
  * Envia a mensagem ao Gemini e retorna a string bruta da resposta.
@@ -28,6 +28,7 @@ Analise a mensagem do cliente e responda APENAS com uma das seguintes palavras, 
 - faq_prazos (perguntas sobre prazo de entrega)
 - faq_trocas (perguntas sobre troca ou devolução)
 - faq_pagamentos (perguntas sobre formas de pagamento)
+- abrir_ticket (cliente quer abrir um ticket, falar com humano, registrar reclamação ou problema)
 - desconhecida (qualquer outro assunto)
 
 Mensagem do cliente: ${mensagem}`;

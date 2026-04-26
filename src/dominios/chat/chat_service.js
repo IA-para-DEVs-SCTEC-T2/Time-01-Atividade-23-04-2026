@@ -6,6 +6,9 @@ function criar_chat_service(classificador, faq_repository, gemini_client) {
   async function processar_mensagem(mensagem) {
     const intencao = await classificador.classificar(mensagem);
 
+    if (intencao === 'abrir_ticket') {
+      return { tipo: 'solicitar_ticket' };
+    }
     if (!INTENCOES_FAQ.includes(intencao)) {
       let texto_desconhecida;
       try {
