@@ -9,6 +9,7 @@ inclusion: always
 - **Sequelize ORM** — Responsável por orquestrar requisições ao banco de dados
 - **PostgreSQL v18** — Banco de dados relacional
 - **Gemini** — Provedor de LLM para o chatbot
+- **dotenv** — Carregamento de variáveis de ambiente a partir do `.env`; chamar `require('dotenv').config()` como primeira linha do ponto de entrada (`src/index.js`)
 
 ## Banco de Dados — FAQs
 Requests e responses são armazenados no PostgreSQL. As tabelas de FAQ são:
